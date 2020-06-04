@@ -6,13 +6,11 @@ import (
 	"strconv"
 
 	"github.com/By-Onex/realtorRestApi/models"
-	"github.com/By-Onex/realtorRestApi/repository"
 	"github.com/By-Onex/realtorRestApi/utils"
 	"github.com/gorilla/mux"
 )
 
-var favoriteRepo = repository.GetFavoriteRepo()
-
+//AddFavoriteController добавеление указанной недвижимости в избранное
 func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 
@@ -62,6 +60,7 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, message)
 }
 
+//AllFavoriteController возвращает список избранной недвижимости
 func AllFavoriteController(w http.ResponseWriter, r *http.Request) {
 
 	favorite := []models.Apartment{}
@@ -78,12 +77,12 @@ func AllFavoriteController(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, message)
 }
 
+//RemoveFavoriteController удаление указанной недвижимости из избранного
 func RemoveFavoriteController(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 
 	params := mux.Vars(r)
 	apartID, err := strconv.Atoi(params["id"])
-
 	if err != nil {
 		fmt.Println(err)
 		msg := utils.Message(false, "Неправильный параметр")

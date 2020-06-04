@@ -1,19 +1,19 @@
 package models
 
-//Apartment Модель недвижимости
+//Apartment модель недвижимости
 type Apartment struct {
 	ID    int64   `json:"id"`
 	Price int     `json:"price"`
 	Area  float32 `json:"area"`
 
-	Floor     int
-	Storeys   int
-	RoomCount int
+	Floor     int `json:"floor"`
+	Storeys   int `json:"storeys"`
+	RoomCount int `json:"room_count"`
 
-	District string
-	Street   string
-	Num      string
+	District string `json:"district"`
+	Street   string `json:"street"`
+	Num      string `json:"num"`
 
-	PageURL  string
-	ImageURL string
+	PageURL  string `json:"page_url"`
+	ImageURL string `json:"image_url"`
 }

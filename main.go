@@ -21,8 +21,11 @@ func main() {
 
 	models.ConnectDB()
 
-	router := mux.NewRouter()
+	controllers.Initialize(models.GetDB())
 
+	router := mux.NewRouter()
+	//Пользователь
+	router.HandleFunc("/api/user/{id}", controllers.GetUserController).Methods("GET")
 	//Недвижимость
 	router.HandleFunc("/api/apart/all", controllers.AllApartmentController).Methods("GET")
 	router.HandleFunc("/api/apart/{id}", controllers.GetApartmentController).Methods("GET")

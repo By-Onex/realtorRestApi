@@ -9,11 +9,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-type Pars struct {
-	Id    int
-	Price int
-}
-
 var db *gorm.DB
 
 //ConnectDB подключение к базе данных
@@ -34,6 +29,7 @@ func ConnectDB() {
 	}
 }
 
+//GetDB возвращает подключение к базе данных
 func GetDB() *gorm.DB {
 	return db
 }

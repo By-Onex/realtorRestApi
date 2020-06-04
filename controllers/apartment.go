@@ -5,17 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/By-Onex/realtorRestApi/repository"
 	"github.com/By-Onex/realtorRestApi/utils"
 	"github.com/gorilla/mux"
 
 	"github.com/By-Onex/realtorRestApi/models"
 )
 
-var apartRepo = repository.GetApartRepo()
-
 func GetApartmentController(w http.ResponseWriter, r *http.Request) {
-
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 

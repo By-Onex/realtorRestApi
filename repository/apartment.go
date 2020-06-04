@@ -1,30 +1,24 @@
 package repository
 
-import "github.com/By-Onex/realtorRestApi/models"
+import (
+	"github.com/By-Onex/realtorRestApi/models"
+	"github.com/jinzhu/gorm"
+)
 
 //ApartmentRepository Репозиторий апартоментов
-type ApartmentRepository struct{}
-
-var apartRepo *ApartmentRepository
-
-func init() {
-	apartRepo = NewApartmentRepo()
+type ApartmentRepository struct {
+	*gorm.DB
 }
 
-//NewApartmentRepo Конструктор
-func NewApartmentRepo() *ApartmentRepository {
-	return &ApartmentRepository{}
-}
-
-//Create Создание
-func (repo *ApartmentRepository) Create(params ...interface{}) error {
-	return models.GetDB().Exec("INSERT INTO apartments () VALUES('?');", params).Error
+//NewApartmentRepository возвращает новый репозиторий недвижимости
+func NewApartmentRepository(db *gorm.DB) *ApartmentRepository {
+	return &ApartmentRepository{db}
 }
 
 //CheckApart проверяет существование недвижимости в БД
 func (repo *ApartmentRepository) CheckApart(id int) (bool, error) {
 	var count int
-	err := models.GetDB().Raw("SELECT count(*) FROM apartment WHERE id = ?", id).Count(&count).Error
+	err := repo.Raw("SELECT count(*) FROM apartment WHERE id = ?", id).Count(&count).Error
 	if err != nil {
 		return false, err
 	}
@@ -37,12 +31,12 @@ func (repo *ApartmentRepository) CheckApart(id int) (bool, error) {
 
 //Get Найти недвижимоть по id
 func (repo *ApartmentRepository) Get(id int, apart *models.Apartment) error {
-	return models.GetDB().Raw("SELECT * FROM apartment WHERE id = ?", id).Scan(apart).Error
+	return repo.Raw("SELECT * FROM apartment WHERE id = ?", id).First(apart).Error
 }
 
 //All Найти недвижимоть
 func (repo *ApartmentRepository) All(aparts *[]models.Apartment) error {
-	rows, err := models.GetDB().Raw("SELECT * FROM apartment").Rows()
+	rows, err := repo.Raw("SELECT * FROM apartment").Rows()
 	defer rows.Close()
 
 	if err != nil {
@@ -54,9 +48,4 @@ func (repo *ApartmentRepository) All(aparts *[]models.Apartment) error {
 		*aparts = append(*aparts, apart)
 	}
 	return nil
-}
-
-//GetApartRepo Репозиторий
-func GetApartRepo() *ApartmentRepository {
-	return apartRepo
 }
