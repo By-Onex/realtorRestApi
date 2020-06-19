@@ -22,3 +22,8 @@ func Respond(w http.ResponseWriter, data map[string]interface{}) {
 		fmt.Println(err)
 	}
 }
+
+//CheckPassword проверка пароля
+func CheckPassword(p1 string, p2 string) bool {
+	return p1 == p2
+}

@@ -12,6 +12,8 @@ import (
 
 //AddFavoriteController добавеление указанной недвижимости в избранное
 func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(usr).(int64)
+
 	var message map[string]interface{}
 
 	params := mux.Vars(r)
@@ -23,7 +25,7 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := favoriteRepo.FindFirst(4, apartID)
+	res, err := favoriteRepo.FindFirst(userID, apartID)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "err")
@@ -49,7 +51,7 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = favoriteRepo.Create(4, apartID)
+	err = favoriteRepo.Create(userID, apartID)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "Ошибка на сервере")
@@ -63,8 +65,10 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 //AllFavoriteController возвращает список избранной недвижимости
 func AllFavoriteController(w http.ResponseWriter, r *http.Request) {
 
+	userID := r.Context().Value(usr).(int64)
+
 	favorite := []models.Apartment{}
-	err := favoriteRepo.All(4, &favorite)
+	err := favoriteRepo.All(userID, &favorite)
 	if err != nil {
 		fmt.Println(err)
 		message := utils.Message(false, "error")
@@ -79,6 +83,8 @@ func AllFavoriteController(w http.ResponseWriter, r *http.Request) {
 
 //RemoveFavoriteController удаление указанной недвижимости из избранного
 func RemoveFavoriteController(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(usr).(int64)
+
 	var message map[string]interface{}
 
 	params := mux.Vars(r)
@@ -90,7 +96,7 @@ func RemoveFavoriteController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := favoriteRepo.Remove(4, apartID)
+	res, err := favoriteRepo.Remove(userID, apartID)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "Ошибка удаления")

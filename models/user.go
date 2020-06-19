@@ -1,9 +1,10 @@
 package models
 
-//User пользователь
+//User сотрудник
 type User struct {
-	ID int64 `json:"id"`
-
-	FIO   string `json:"fio"`
-	Email string `json:"email"`
+	ID       int64  `json:"id"`
+	FIO      string `json:"fio"`
+	Email    string `json:"email"`
+	Number   string `json:"number"`
+	Password string `json:"-"`
 }

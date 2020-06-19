@@ -4,7 +4,7 @@ package models
 type Apartment struct {
 	ID    int64   `json:"id"`
 	Price int     `json:"price"`
-	Area  float32 `json:"area"`
+	Area  float64 `json:"area"`
 
 	Floor     int `json:"floor"`
 	Storeys   int `json:"storeys"`

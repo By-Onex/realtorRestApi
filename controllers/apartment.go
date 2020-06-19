@@ -11,6 +11,7 @@ import (
 	"github.com/By-Onex/realtorRestApi/models"
 )
 
+//GetApartmentController возвращает информацию о недвижимости
 func GetApartmentController(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
@@ -37,6 +38,7 @@ func GetApartmentController(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, msg)
 }
 
+//AllApartmentController возвращает информацию о всей недвижимости
 func AllApartmentController(w http.ResponseWriter, r *http.Request) {
 	aparts := []models.Apartment{}
 	err := apartRepo.All(&aparts)
