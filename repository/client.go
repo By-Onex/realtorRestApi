@@ -1,20 +1,20 @@
 package repository
 
 import (
-	"github.com/By-Onex/realtorRestApi/models"
 	"github.com/jinzhu/gorm"
 )
 
 //ClientRepository репозиторий клиентов
 type ClientRepository struct {
-	*gorm.DB
+	*BaseRepository
 }
 
 //NewClientRepository возвращает новый репозиторий клиентов
 func NewClientRepository(db *gorm.DB) *ClientRepository {
-	return &ClientRepository{db}
+	return &ClientRepository{&BaseRepository{"клиенты", db}}
 }
 
+/*
 //FindByID ищет клиента по id
 func (repo *ClientRepository) FindByID(id int, client *models.Client) error {
 	return repo.Raw("SELECT * FROM клиенты WHERE id = ? LIMIT 1;", id).Scan(client).Error
@@ -45,3 +45,4 @@ func (repo *ClientRepository) All(clients *[]models.Client) error {
 func (repo *ClientRepository) Update(client *models.Client) error {
 	return repo.Table("клиенты").Update(client).Error
 }
+*/

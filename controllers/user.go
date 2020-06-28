@@ -27,7 +27,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &models.User{}
-	err = userRepo.FindUserByID(id, user)
+	err = userRepo.FindByID(id, user)
 
 	if err != nil {
 		if err.Error() == "record not found" {
@@ -130,7 +130,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = userRepo.CreateUser(auth)
+	err = userRepo.Create(auth)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "Произошла ошибка на сервере")
@@ -167,19 +167,13 @@ func UserUpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if auth.Password != auth.SecondPassword {
-		message = utils.Message(false, "Пароли не совпадают")
-		utils.Respond(w, message)
-		return
-	}
-
 	if len(auth.Password) < 6 {
 		message = utils.Message(false, "Короткий пароль")
 		utils.Respond(w, message)
 		return
 	}
 
-	err = userRepo.CreateUser(auth)
+	err = userRepo.UpdatePasswordUser(user.ID, auth.Password)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "Произошла ошибка на сервере")

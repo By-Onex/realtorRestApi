@@ -7,14 +7,25 @@ import (
 
 //UserRepository сотрудник
 type UserRepository struct {
-	*gorm.DB
+	*BaseRepository
 }
 
 //NewUserRepository возвращает новый репозиторий сотрудника
 func NewUserRepository(db *gorm.DB) *UserRepository {
-	return &UserRepository{db}
+	return &UserRepository{&BaseRepository{"сотрудники", db}}
 }
 
+//UpdatePasswordUser обновление пароля сотрудника
+func (repo *UserRepository) UpdatePasswordUser(id int64, password string) error {
+	return repo.Exec("UPDATE сотрудники SET пароль = ? WHERE id = ? LIMIT 1;", password, id).Error
+}
+
+//FindUserByEmail находит пользователя по логину
+func (repo *UserRepository) FindUserByEmail(email string, user *models.User) error {
+	return repo.Raw("SELECT * FROM сотрудники WHERE email = ? LIMIT 1;", email).Scan(user).Error
+}
+
+/*
 //FindUserByID находит сотрудника по идентификатору
 func (repo *UserRepository) FindUserByID(id int, user *models.User) error {
 	return repo.Raw("SELECT * FROM сотрудники WHERE id = ? LIMIT 1;", id).Scan(user).Error
