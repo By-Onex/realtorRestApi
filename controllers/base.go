@@ -10,6 +10,8 @@ var (
 	userRepo     *repository.UserRepository
 	apartRepo    *repository.ApartmentRepository
 	favoriteRepo *repository.FavoriteRepository
+	clientRepo   *repository.ClientRepository
+	requestRepo  *repository.RequestRepository
 )
 
 const usr models.UserT = "user"
@@ -19,4 +21,6 @@ func Initialize(db *gorm.DB) {
 	userRepo = repository.NewUserRepository(db)
 	apartRepo = repository.NewApartmentRepository(db)
 	favoriteRepo = repository.NewFavoriteRepository(db)
+	clientRepo = repository.NewClientRepository(db)
+	requestRepo = repository.NewRequestRepository(db)
 }

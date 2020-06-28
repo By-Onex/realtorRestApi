@@ -18,7 +18,7 @@ func NewApartmentRepository(db *gorm.DB) *ApartmentRepository {
 //CheckApart проверяет существование недвижимости в БД
 func (repo *ApartmentRepository) CheckApart(id int) (bool, error) {
 	var count int
-	err := repo.Raw("SELECT count(*) FROM apartment WHERE id = ?", id).Count(&count).Error
+	err := repo.Raw("SELECT count(*) FROM недвижимость WHERE id = ?", id).Count(&count).Error
 	if err != nil {
 		return false, err
 	}
@@ -31,12 +31,31 @@ func (repo *ApartmentRepository) CheckApart(id int) (bool, error) {
 
 //Get Найти недвижимоть по id
 func (repo *ApartmentRepository) Get(id int, apart *models.Apartment) error {
-	return repo.Raw("SELECT * FROM apartment WHERE id = ?", id).First(apart).Error
+	return repo.Raw("SELECT * FROM недвижимость WHERE id = ?", id).First(apart).Error
 }
 
 //All Найти недвижимоть
 func (repo *ApartmentRepository) All(aparts *[]models.Apartment) error {
-	rows, err := repo.Raw("SELECT * FROM apartment").Rows()
+	rows, err := repo.Raw("SELECT * FROM недвижимость").Rows()
+	defer rows.Close()
+
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		var apart models.Apartment
+		models.GetDB().ScanRows(rows, &apart)
+		*aparts = append(*aparts, apart)
+	}
+	return nil
+}
+
+func (repo *ApartmentRepository) AddApart(apart *models.Apartment) error {
+	return repo.Table("недвижимость").Create(apart).Error
+}
+
+func (repo *ApartmentRepository) Search(aparts *[]models.Apartment) error {
+	rows, err := repo.Raw("SELECT * FROM недвижимость WHERE стоимость > 2000000").Rows()
 	defer rows.Close()
 
 	if err != nil {

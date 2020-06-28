@@ -38,6 +38,19 @@ func GetApartmentController(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, msg)
 }
 
+//SearchApartment поиск недвижимости в бд
+func SearchApartment(w http.ResponseWriter, r *http.Request) {
+	aparts := []models.Apartment{}
+	err := apartRepo.Search(&aparts)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	msg := utils.Message(true, "")
+	msg["data"] = aparts
+	utils.Respond(w, msg)
+}
+
 //AllApartmentController возвращает информацию о всей недвижимости
 func AllApartmentController(w http.ResponseWriter, r *http.Request) {
 	aparts := []models.Apartment{}

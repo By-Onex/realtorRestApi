@@ -98,6 +98,26 @@ func GetApartments(count int) (*list.List, error) {
 		num := address[len(address)-1]
 		item.Num = num
 
+		districts := strings.Split(s.Find(".item-address-georeferences").First().Text(), " ")
+
+		item.District = strings.Join(districts, " ")
+
+		var isURL bool
+		item.PageURL, isURL = s.Find(".snippet-link").First().Attr("href")
+		if !isURL {
+			return
+		}
+		item.PageURL = "https://www.avito.ru" + item.PageURL
+
+		var imgSRC = s.Find(".large-picture-img").First()
+		if imgSRC == nil {
+			return
+		}
+		item.ImageURL, isURL = imgSRC.Attr("src")
+		if !isURL {
+			return
+		}
+
 		apart.PushBack(item)
 	})
 

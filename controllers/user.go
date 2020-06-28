@@ -13,8 +13,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//GetUserController ищет сотрудника по идентефикатору
-func GetUserController(w http.ResponseWriter, r *http.Request) {
+//GetUser ищет сотрудника по идентефикатору
+func GetUser(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 
 	params := mux.Vars(r)
@@ -47,7 +47,7 @@ func GetUserController(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, message)
 }
 
-//UserLogin авторизация пользователя
+//UserLogin авторизация сотрудника
 func UserLogin(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 	user := &models.User{}
@@ -56,15 +56,15 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(auth) //декодирует тело запроса в struct и завершается неудачно в случае ошибки
 	if err != nil {
-		utils.Respond(w, utils.Message(false, "Invalid request"))
+		utils.Respond(w, utils.Message(false, "Неправильный запрос"))
 		return
 	}
 
-	err = userRepo.FindUserByUsername(auth.Username, user)
+	err = userRepo.FindUserByEmail(auth.Email, user)
 
 	if err != nil {
 		if err.Error() == "record not found" {
-			message = utils.Message(false, "Пользователя с таким логином не найдено")
+			message = utils.Message(false, "Пользователя с таким email не найдено")
 			utils.Respond(w, message)
 			return
 		}
@@ -93,7 +93,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, message)
 }
 
-//UserRegister регистрация пользователя
+//UserRegister регистрация сотрудника
 func UserRegister(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 	user := &models.User{}
@@ -106,13 +106,62 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = userRepo.FindUserByUsername(auth.Username, user)
+	err = userRepo.FindUserByEmail(auth.Email, user)
 	if err != nil && err.Error() != "record not found" {
 		fmt.Println(err)
 		message = utils.Message(false, "Произошла ошибка на сервере")
 		utils.Respond(w, message)
 		return
-	} else if user.Username != "" {
+	} else if user.Email != "" {
+		message = utils.Message(false, "Пользователь с такой почтой уже зарегесрирован")
+		utils.Respond(w, message)
+		return
+	}
+
+	if auth.Password != auth.SecondPassword {
+		message = utils.Message(false, "Пароли не совпадают")
+		utils.Respond(w, message)
+		return
+	}
+
+	if len(auth.Password) < 6 {
+		message = utils.Message(false, "Короткий пароль")
+		utils.Respond(w, message)
+		return
+	}
+
+	err = userRepo.CreateUser(auth)
+	if err != nil {
+		fmt.Println(err)
+		message = utils.Message(false, "Произошла ошибка на сервере")
+		utils.Respond(w, message)
+		return
+	}
+
+	message = utils.Message(true, "Успешно")
+	utils.Respond(w, message)
+}
+
+//UserUpdatePassword обновление пароля сотрудника
+func UserUpdatePassword(w http.ResponseWriter, r *http.Request) {
+	var message map[string]interface{}
+	user := &models.User{}
+
+	auth := &models.Auth{}
+
+	err := json.NewDecoder(r.Body).Decode(auth) //декодирует тело запроса в struct и завершается неудачно в случае ошибки
+	if err != nil {
+		utils.Respond(w, utils.Message(false, "Invalid request"))
+		return
+	}
+
+	err = userRepo.FindUserByEmail(auth.Email, user)
+	if err != nil && err.Error() != "record not found" {
+		fmt.Println(err)
+		message = utils.Message(false, "Произошла ошибка на сервере")
+		utils.Respond(w, message)
+		return
+	} else if user.Email != "" {
 		message = utils.Message(false, "Пользователь с таким логином уже существует")
 		utils.Respond(w, message)
 		return
@@ -130,7 +179,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = userRepo.CreateUser(auth.Username, auth.Password)
+	err = userRepo.CreateUser(auth)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "Произошла ошибка на сервере")

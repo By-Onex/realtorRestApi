@@ -17,14 +17,14 @@ func NewFavoriteRepository(db *gorm.DB) *FavoriteRepository {
 
 //Create Создание
 func (repo *FavoriteRepository) Create(userID int64, apartID int) error {
-	return repo.Exec("INSERT INTO favorite_apartments (user_id, apartment_id) VALUES(?, ?);", userID, apartID).Error
+	return repo.Exec("INSERT INTO избранная_недвижимость (сотрудник_id, недвижимость_id) VALUES(?, ?);", userID, apartID).Error
 }
 
 //Remove удаление записи
 func (repo *FavoriteRepository) Remove(userID int64, apartID int) (bool, error) {
 	var count int
 	err := repo.Raw(
-		"WITH deleted AS (DELETE FROM favorite_apartments  WHERE user_id = ? AND apartment_id = ? RETURNING *) SELECT count(*) FROM deleted;",
+		"WITH deleted AS (DELETE FROM избранная_недвижимость  WHERE сотрудник_id = ? AND недвижимость_id = ? RETURNING *) SELECT count(*) FROM deleted;",
 		userID, apartID).Count(&count).Error
 
 	if err != nil {
@@ -41,7 +41,7 @@ func (repo *FavoriteRepository) Remove(userID int64, apartID int) (bool, error) 
 func (repo *FavoriteRepository) FindFirst(userID int64, apartID int) (bool, error) {
 	var count int
 	err := repo.Raw(
-		"SELECT count(*) FROM favorite_apartments f WHERE f.user_id = ? AND f.apartment_id = ? LIMIT 1;", userID, apartID).Count(&count).Error
+		"SELECT count(*) FROM избранная_недвижимость f WHERE f.сотрудник_id = ? AND f.недвижимость_id = ? LIMIT 1;", userID, apartID).Count(&count).Error
 	if err != nil {
 		return false, err
 	}
@@ -55,8 +55,8 @@ func (repo *FavoriteRepository) FindFirst(userID int64, apartID int) (bool, erro
 func (repo *FavoriteRepository) All(userID int64, aparts *[]models.Apartment) error {
 	rows, err := repo.Raw(
 		`SELECT * FROM apartment a
-		LEFT JOIN favorite_apartments f ON a.id = f.apartment_id
-		WHERE f.user_id = ?`, userID).Rows()
+		LEFT JOIN избранная_недвижимость f ON a.id = f.недвижимость_id
+		WHERE f.сотрудник_id = ?`, userID).Rows()
 
 	if err != nil {
 		return err

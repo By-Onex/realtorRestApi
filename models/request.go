@@ -4,22 +4,25 @@ package models
 type Request struct {
 	ID int64 `json:"id"`
 
-	MinPrice int `json:"min_price"`
-	MaxPrice int `json:"max_price"`
+	UserID   int64 `json:"user_id" gorm:"column:сотрудник_id"`
+	ClientID int64 `json:"client_id" gorm:"column:клиент_id"`
 
-	MinArea float32 `json:"min_area"`
-	MaxArea float32 `json:"max_area"`
+	MinPrice int `json:"min_price" gorm:"column:мин_цена"`
+	MaxPrice int `json:"max_price" gorm:"column:макс_цена"`
 
-	MinFloor int `json:"min_floor"`
-	MaxFloor int `json:"max_floor"`
+	MinArea float32 `json:"min_area" gorm:"column:мин_площадь"`
+	MaxArea float32 `json:"max_area" gorm:"column:макс_цена"`
 
-	MinStoreys int `json:"min_storeys"`
-	MaxStoreys int `json:"max_storeys"`
+	MinFloor int `json:"min_floor" gorm:"column:мин_этаж"`
+	MaxFloor int `json:"max_floor" gorm:"column:макс_этаж"`
 
-	MinRoomCount int `json:"min_room_count"`
-	MaxRoomCount int `json:"max_room_count"`
+	MinStoreys int `json:"min_storeys" gorm:"column:мин_этажность"`
+	MaxStoreys int `json:"max_storeys" gorm:"column:мах_этажность"`
 
-	District string `json:"district"`
-	Street   string `json:"street"`
-	Num      string `json:"num"`
+	MinRoomCount int `json:"min_room_count" gorm:"column:мин_комнат"`
+	MaxRoomCount int `json:"max_room_count" gorm:"column:макс_комнат"`
+
+	District string `json:"district" gorm:"column:район"`
+	Street   string `json:"street" gorm:"column:улица"`
+	Num      string `json:"num" gorm:"column:номер"`
 }

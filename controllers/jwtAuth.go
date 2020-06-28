@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -64,7 +63,7 @@ func MiddlewareJwt(next http.Handler) http.Handler {
 		}
 
 		//продолжаем выполнение запроса
-		fmt.Printf("User %d\n", tk.UserID)
+		//fmt.Printf("User %d\n", tk.UserID)
 		ctx := context.WithValue(r.Context(), usr, tk.UserID)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r) //передать управление следующему обработчику
