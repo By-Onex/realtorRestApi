@@ -14,7 +14,7 @@ import (
 //GetApartmentController возвращает информацию о недвижимости
 func GetApartmentController(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["id"])
+	id, err := strconv.ParseInt(params["id"], 10, 64)
 
 	if err != nil {
 		msg := utils.Message(false, "неправильный параметр")
@@ -23,11 +23,11 @@ func GetApartmentController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	apart := &models.Apartment{}
-	err = apartRepo.Get(id, apart)
+	err = apartRepo.FindByID(id, apart)
 
 	if err != nil {
 		if err.Error() == "record not found" {
-			msg := utils.Message(false, "не найдено")
+			msg := utils.Message(false, fmt.Sprintf("Недвижимости с идентификатором %d не найдено", id))
 			utils.Respond(w, msg)
 			return
 		}

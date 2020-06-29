@@ -25,7 +25,7 @@ func GetClient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &models.Client{}
-	err = clientRepo.FindByID(id, client)
+	err = clientRepo.FindByID(int64(id), client)
 
 	if err != nil {
 		if err.Error() == "record not found" {

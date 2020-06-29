@@ -27,7 +27,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &models.User{}
-	err = userRepo.FindByID(id, user)
+	err = userRepo.FindByID(int64(id), user)
 
 	if err != nil {
 		if err.Error() == "record not found" {

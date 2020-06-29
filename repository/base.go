@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"github.com/By-Onex/realtorRestApi/models"
 	"github.com/jinzhu/gorm"
 )
 
@@ -11,14 +10,14 @@ type BaseRepository struct {
 	*gorm.DB
 }
 
-//NewBaseRepository возвращает новый репозиторий клиентов
+//NewBaseRepository возвращает новый базовый репозиторий
 func NewBaseRepository(table string, db *gorm.DB) *BaseRepository {
 	return &BaseRepository{table, db}
 }
 
-//FindByID ищет сущность по id
-func (repo *BaseRepository) FindByID(id int, entity interface{}) error {
-	return repo.Raw("SELECT * FROM "+repo.table+" WHERE id = ? LIMIT 1;", id).Scan(entity).Error
+//FindByID поиск сущности по id
+func (repo *BaseRepository) FindByID(id int64, out interface{}) error {
+	return repo.Raw("SELECT * FROM "+repo.table+" WHERE id = ? LIMIT 1;", id).Scan(out).Error
 }
 
 //Create создает сущность
@@ -32,6 +31,6 @@ func (repo *BaseRepository) All(out interface{}) error {
 }
 
 //Update обновляет данные сущности
-func (repo *BaseRepository) Update(client *models.Client) error {
-	return repo.Table(repo.table).Update(client).Error
+func (repo *BaseRepository) Update(entity interface{}) error {
+	return repo.Table(repo.table).Update(entity).Error
 }

@@ -16,12 +16,12 @@ func NewFavoriteRepository(db *gorm.DB) *FavoriteRepository {
 }
 
 //Create Создание
-func (repo *FavoriteRepository) Create(userID int64, apartID int) error {
+func (repo *FavoriteRepository) Create(userID int64, apartID int64) error {
 	return repo.Exec("INSERT INTO избранная_недвижимость (сотрудник_id, недвижимость_id) VALUES(?, ?);", userID, apartID).Error
 }
 
 //Remove удаление записи
-func (repo *FavoriteRepository) Remove(userID int64, apartID int) (bool, error) {
+func (repo *FavoriteRepository) Remove(userID int64, apartID int64) (bool, error) {
 	var count int
 	err := repo.Raw(
 		"WITH deleted AS (DELETE FROM избранная_недвижимость  WHERE сотрудник_id = ? AND недвижимость_id = ? RETURNING *) SELECT count(*) FROM deleted;",
@@ -38,7 +38,7 @@ func (repo *FavoriteRepository) Remove(userID int64, apartID int) (bool, error) 
 }
 
 //FindFirst проверить наличие такой же записи
-func (repo *FavoriteRepository) FindFirst(userID int64, apartID int) (bool, error) {
+func (repo *FavoriteRepository) FindFirst(userID int64, apartID int64) (bool, error) {
 	var count int
 	err := repo.Raw(
 		"SELECT count(*) FROM избранная_недвижимость f WHERE f.сотрудник_id = ? AND f.недвижимость_id = ? LIMIT 1;", userID, apartID).Count(&count).Error
@@ -53,24 +53,9 @@ func (repo *FavoriteRepository) FindFirst(userID int64, apartID int) (bool, erro
 
 //All Найти избранную недвижимоть пользователя
 func (repo *FavoriteRepository) All(userID int64, aparts *[]models.Apartment) error {
-	rows, err := repo.Raw(
-		`SELECT * FROM apartment a
-		LEFT JOIN избранная_недвижимость f ON a.id = f.недвижимость_id
-		WHERE f.сотрудник_id = ?`, userID).Rows()
+	return repo.Raw(
+		`SELECT * FROM недвижимость a
+	LEFT JOIN избранная_недвижимость f ON a.id = f.недвижимость_id
+	WHERE f.сотрудник_id = ?`, userID).Scan(aparts).Error
 
-	if err != nil {
-		return err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var apart models.Apartment
-		err = repo.ScanRows(rows, &apart)
-		if err != nil {
-			return err
-		}
-		*aparts = append(*aparts, apart)
-	}
-	return nil
 }

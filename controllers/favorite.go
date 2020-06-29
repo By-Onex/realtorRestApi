@@ -17,7 +17,7 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 
 	params := mux.Vars(r)
-	apartID, err := strconv.Atoi(params["id"])
+	apartID, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
 		fmt.Println(err)
 		message = utils.Message(false, "Неправильно задан параметр")
@@ -28,7 +28,7 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 	res, err := favoriteRepo.FindFirst(userID, apartID)
 	if err != nil {
 		fmt.Println(err)
-		message = utils.Message(false, "err")
+		message = utils.Message(false, "Ошибка на сервере")
 		utils.Respond(w, message)
 		return
 	}
@@ -38,15 +38,15 @@ func AddFavoriteController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err = apartRepo.CheckApart(apartID)
+	err = apartRepo.FindByID(apartID, &models.Apartment{})
 	if err != nil {
+		if err.Error() == "record not found" {
+			msg := utils.Message(false, fmt.Sprintf("Недвижимости с идентификатором %d не найдено", apartID))
+			utils.Respond(w, msg)
+			return
+		}
 		fmt.Println(err)
 		message = utils.Message(false, "Ошибка на сервере")
-		utils.Respond(w, message)
-		return
-	}
-	if res == false {
-		message = utils.Message(false, "Такой недвижимости не существует")
 		utils.Respond(w, message)
 		return
 	}
@@ -71,7 +71,7 @@ func AllFavoriteController(w http.ResponseWriter, r *http.Request) {
 	err := favoriteRepo.All(userID, &favorite)
 	if err != nil {
 		fmt.Println(err)
-		message := utils.Message(false, "error")
+		message := utils.Message(false, "Ошибка на сервере")
 		utils.Respond(w, message)
 		return
 	}
@@ -88,7 +88,7 @@ func RemoveFavoriteController(w http.ResponseWriter, r *http.Request) {
 	var message map[string]interface{}
 
 	params := mux.Vars(r)
-	apartID, err := strconv.Atoi(params["id"])
+	apartID, err := strconv.ParseInt(params["id"], 10, 64)
 	if err != nil {
 		fmt.Println(err)
 		msg := utils.Message(false, "Неправильный параметр")

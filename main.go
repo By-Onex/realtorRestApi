@@ -33,8 +33,8 @@ func main() {
 		if err != nil {
 			fmt.Println(e.Value)
 		}
-	}
-	router.Use(controllers.MiddlewareJwt)*/
+	}*/
+	router.Use(controllers.MiddlewareJwt)
 
 	//Сотрудник
 	//Регистрация
@@ -61,6 +61,14 @@ func main() {
 	router.HandleFunc("/api/favorite/{id}", controllers.AddFavoriteController).Methods(http.MethodPost)
 	//Удаление
 	router.HandleFunc("/api/favorite/{id}", controllers.RemoveFavoriteController).Methods(http.MethodDelete)
+
+	//Клиент
+	//Весь список клиентов
+	router.HandleFunc("/api/client/all", controllers.AllClients).Methods(http.MethodGet)
+	//Добавление
+	router.HandleFunc("/api/client/", controllers.CreateClient).Methods(http.MethodPost)
+	//Информация об 1 клиенте
+	router.HandleFunc("/api/client/{id}", controllers.GetClient).Methods(http.MethodGet)
 
 	port := os.Getenv("port")
 
